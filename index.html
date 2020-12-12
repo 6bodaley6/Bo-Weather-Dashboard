@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Weather Dashboard</h1>
+    </header>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+          <h5>Search for a city</h5>
+          <form class="form-inline">
+            <input
+              type="text"
+              class="form-control mb-2 mr-sm-2"
+              id="inlineFormInputName2"
+              placeholder="City"
+            />
+            <button id="btn" type="submit" class="btn btn-primary mb-2">
+              Submit
+            </button>
+          </form>
+          <ul id="search-history">
+            test city
+          </ul>
+        </div>
+        <div class="col-9">
+          <div class="row">
+            <h2 id="selected-city"></h2>
+            <div id="weather-details">
+              <ul>
+                <li id="tempurature"></li>
+                <li id="humidity"></li>
+                <li id="wind-speed"></li>
+                <li id="uv-index"></li>
+              </ul>
+            </div>
+          </div>
+          <div id="weather-cards" class="row"></div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/js/logic.js"></script>
+  </body>
+</html>
