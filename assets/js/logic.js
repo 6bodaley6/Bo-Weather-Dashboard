@@ -29,19 +29,38 @@ function getFiveDayForecast(searchValue) {
     `http://api.openweathermap.org/data/2.5/forecast?q=${searchValue}&appid=f342d8ed429b3194f07876e1383e2756&units=imperial`
   )
     .then(function (response) {
-     if (response.ok)
-     response.json().then(function(response){
-         for (var i = 0; < response.list.length)
-     });
-        return response.json();
+      if (response.ok) return response.json();
     })
-    //?? should I do it the way below or do the if statment
     .then(function (response) {
       console.log(response);
-      document.getElementById("weather-cards").innerHTML =
-        "5 Day Forecast: " + response;
+      for (var i = 0; i < 5; i++) {
+        var cardEl = document.createElement("div"); //how do i get my data points and put in each card?: Is it append child on each of the var below
 
-      //!! use response to put forecast on page
+        var date = document.createElement("p");
+        date.innerHTML = response.list[i].dt;
+        cardEl.appendChild(date);
+
+        var icon = document.createElement("img");
+        icon.src = "";
+        cardEl.appendChild(icon);
+
+        var temp = document.createElement("p");
+        temp.innerHTML = response.list[i].main.temp;
+        cardEl.appendChild(temp);
+
+        var humidity = document.createElement("p");
+        humidity.innerHTML = response.list[i].humidity;
+        cardEl.appendChild(humidity);
+
+        //TODO create new 4 elements for each card
+        // Create 4 data elements for each card appendChild
+        // Insert data into each card after the 5 cards have the data append the parent element
+        // take card then append each card to page at end of loop inside that card elements
+        // at each completed iteration of the loop
+        //TODO response to display each card
+        var weatherCards = document.getElementById("weather-cards");
+        weatherCards.appendChild(cardEl);
+      }
     });
 }
 //TODO END
