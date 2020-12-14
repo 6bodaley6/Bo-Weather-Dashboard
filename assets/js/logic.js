@@ -11,7 +11,6 @@ function getCurrentWeather(searchValue) {
     })
     .then(function (response) {
       console.log(response);
-      //!! use response to put current weather on page
       document.getElementById("tempurature").innerHTML =
         "Tempurature: " + response.main.temp;
       document.getElementById("humidity").innerHTML =
@@ -23,7 +22,6 @@ function getCurrentWeather(searchValue) {
     });
 }
 
-//TODO START
 function getFiveDayForecast(searchValue) {
   fetch(
     `http://api.openweathermap.org/data/2.5/forecast?q=${searchValue}&appid=f342d8ed429b3194f07876e1383e2756&units=imperial`
@@ -33,6 +31,8 @@ function getFiveDayForecast(searchValue) {
     })
     .then(function (response) {
       console.log(response);
+      var headerFour;
+      document.createElement("h4");
       for (var i = 0; i < 5; i++) {
         var cardEl = document.createElement("div"); //how do i get my data points and put in each card?: Is it append child on each of the var below
 
@@ -49,7 +49,7 @@ function getFiveDayForecast(searchValue) {
         cardEl.appendChild(temp);
 
         var humidity = document.createElement("p");
-        humidity.innerHTML = response.list[i].humidity;
+        humidity.innerHTML = response.list[i];
         cardEl.appendChild(humidity);
 
         //TODO create new 4 elements for each card
@@ -63,7 +63,6 @@ function getFiveDayForecast(searchValue) {
       }
     });
 }
-//TODO END
 
 function getUvIndex(lat, lon) {
   fetch(
@@ -83,18 +82,16 @@ function myFunction(event) {
   event.preventDefault();
 
   var searchValue = document.getElementById("inlineFormInputName2").value;
+
   console.log(searchValue);
-  //!! create and use a function to save searchValue in list div in html
   getCurrentWeather(searchValue);
   getFiveDayForecast(searchValue);
   saveSearchValue();
 }
 
 function saveSearchValue(searchValue) {
-  //   if (searchValue >= 0) {
   var li = document.createElement("li");
   var searchValue = document.getElementById("inlineFormInputName2").value;
   li.textContent = searchValue;
   document.getElementById("search-history").appendChild(li);
-  //   }
 }
