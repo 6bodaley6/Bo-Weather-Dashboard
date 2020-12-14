@@ -1,5 +1,12 @@
 var button = document.getElementById("btn");
 
+getFromLocalStorage();
+var local = JSON.parse(window.localStorage.getItem("Cities"));
+if (local) {
+  getCurrentWeather(local[local.length - 1]);
+} else {
+  getCurrentWeather("Salt Lake City");
+}
 button.addEventListener("click", myFunction);
 
 function getCurrentWeather(searchValue) {
@@ -17,11 +24,18 @@ function getCurrentWeather(searchValue) {
         "Humidity: " + response.main.humidity;
       document.getElementById("wind-speed").innerHTML =
         "Wind Speed: " + response.wind.speed;
+      var title = document.getElementById("selected-city");
+
+      var icon = document.createElement("img");
+      icon.src =
+        "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png";
+      title.textContent = searchValue;
+      title.appendChild(icon);
 
       getUvIndex(response.coord.lat, response.coord.lon);
     });
 }
-
+//TODO Wrap everything in a card
 function getFiveDayForecast(searchValue) {
   fetch(
     `http://api.openweathermap.org/data/2.5/forecast?q=${searchValue}&appid=f342d8ed429b3194f07876e1383e2756&units=imperial`
@@ -31,34 +45,34 @@ function getFiveDayForecast(searchValue) {
     })
     .then(function (response) {
       console.log(response);
-      var headerFour;
+      var weatherCards = document.getElementById("weather-cards");
+      weatherCards.innerHTML = "";
       document.createElement("h4");
       for (var i = 0; i < 5; i++) {
-        var cardEl = document.createElement("div"); //how do i get my data points and put in each card?: Is it append child on each of the var below
+        var cardEl = document.createElement("div");
 
         var date = document.createElement("p");
-        date.innerHTML = response.list[i].dt;
+        date.innerHTML = new Date(response.list[i].dt_txt).toLocaleDateString();
         cardEl.appendChild(date);
 
         var icon = document.createElement("img");
-        icon.src = "";
+        icon.src =
+          "https://openweathermap.org/img/w/" +
+          response.list[i].weather[0].icon +
+          ".png";
+
+        console.log(response);
         cardEl.appendChild(icon);
 
         var temp = document.createElement("p");
-        temp.innerHTML = response.list[i].main.temp;
+        temp.innerHTML = "Temp: " + response.list[i].main.temp + "°F";
         cardEl.appendChild(temp);
 
         var humidity = document.createElement("p");
-        humidity.innerHTML = response.list[i];
+        humidity.innerHTML =
+          "Humidity: " + response.list[i].main.humidity + "%";
         cardEl.appendChild(humidity);
 
-        //TODO create new 4 elements for each card
-        // Create 4 data elements for each card appendChild
-        // Insert data into each card after the 5 cards have the data append the parent element
-        // take card then append each card to page at end of loop inside that card elements
-        // at each completed iteration of the loop
-        //TODO response to display each card
-        var weatherCards = document.getElementById("weather-cards");
         weatherCards.appendChild(cardEl);
       }
     });
@@ -86,12 +100,28 @@ function myFunction(event) {
   console.log(searchValue);
   getCurrentWeather(searchValue);
   getFiveDayForecast(searchValue);
-  saveSearchValue();
+  saveSearchValue(searchValue);
 }
 
 function saveSearchValue(searchValue) {
-  var li = document.createElement("li");
-  var searchValue = document.getElementById("inlineFormInputName2").value;
-  li.textContent = searchValue;
-  document.getElementById("search-history").appendChild(li);
+  var cities = JSON.parse(window.localStorage.getItem("Cities")) || [];
+  cities.push(searchValue);
+  var unique = [...new Set(cities)];
+  window.localStorage.setItem("Cities", JSON.stringify(unique));
+  if (searchValue === unique[unique.length - 1]) {
+    var li = document.createElement("li");
+    li.classList.add("list-group-item", "list-group-item-action");
+    li.textContent = searchValue;
+    li.onclick = function () {
+      getCurrentWeather(searchValue);
+      getFiveDayForecast(searchValue);
+    };
+    document.getElementById("search-history").appendChild(li);
+  }
+}
+function getFromLocalStorage() {
+  var cities = JSON.parse(window.localStorage.getItem("Cities")) || [];
+  cities.forEach((city) => {
+    saveSearchValue(city);
+  });
 }
