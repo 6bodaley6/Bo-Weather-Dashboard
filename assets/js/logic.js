@@ -4,8 +4,10 @@ getFromLocalStorage();
 var local = JSON.parse(window.localStorage.getItem("Cities"));
 if (local) {
   getCurrentWeather(local[local.length - 1]);
+  getFiveDayForecast(local[local.length - 1]);
 } else {
   getCurrentWeather("Salt Lake City");
+  getFiveDayForecast("Salt Lake City");
 }
 button.addEventListener("click", myFunction);
 
@@ -18,6 +20,9 @@ function getCurrentWeather(searchValue) {
     })
     .then(function (response) {
       console.log(response);
+      if (response.cod == "400") {
+        return;
+      }
       document.getElementById("tempurature").innerHTML =
         "Tempurature: " + response.main.temp;
       document.getElementById("humidity").innerHTML =
@@ -33,7 +38,8 @@ function getCurrentWeather(searchValue) {
       title.appendChild(icon);
 
       getUvIndex(response.coord.lat, response.coord.lon);
-    });
+    })
+    .catch((error) => console.log(error));
 }
 //TODO Wrap everything in a card
 function getFiveDayForecast(searchValue) {
@@ -45,12 +51,15 @@ function getFiveDayForecast(searchValue) {
     })
     .then(function (response) {
       console.log(response);
+
       var weatherCards = document.getElementById("weather-cards");
+      // weatherCards.classList.add("p-3 mb-2 bg-primary text-white");
+
       weatherCards.innerHTML = "";
       document.createElement("h4");
       for (var i = 0; i < 5; i++) {
         var cardEl = document.createElement("div");
-
+        cardEl.classList.add("col-2", "card");
         var date = document.createElement("p");
         date.innerHTML = new Date(response.list[i].dt_txt).toLocaleDateString();
         cardEl.appendChild(date);
@@ -94,8 +103,9 @@ function getUvIndex(lat, lon) {
 
 function myFunction(event) {
   event.preventDefault();
-
-  var searchValue = document.getElementById("inlineFormInputName2").value;
+  var form = document.getElementById("inlineFormInputName2");
+  var searchValue = form.value;
+  form.innerHTML = "";
 
   console.log(searchValue);
   getCurrentWeather(searchValue);
@@ -106,7 +116,10 @@ function myFunction(event) {
 function saveSearchValue(searchValue) {
   var cities = JSON.parse(window.localStorage.getItem("Cities")) || [];
   cities.push(searchValue);
-  var unique = [...new Set(cities)];
+  var citiesFiltered = cities.filter(function (city) {
+    return city.trim();
+  });
+  var unique = [...new Set(citiesFiltered)];
   window.localStorage.setItem("Cities", JSON.stringify(unique));
   if (searchValue === unique[unique.length - 1]) {
     var li = document.createElement("li");
